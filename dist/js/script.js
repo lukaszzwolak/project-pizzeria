@@ -60,7 +60,10 @@
       thisProduct.data = data;
 
       thisProduct.renderInMenu();
+      thisProduct.getElements();
       thisProduct.initAccordion();
+      thisProduct.initOrderForm();
+      thisProduct.processOrder();
 
       console.log('new Product: ', thisProduct);
     }
@@ -77,14 +80,21 @@
       menuContainer.appendChild(thisProduct.element);
     }
 
+    getElements() {
+      const thisProduct = this;
+
+      thisProduct.accordionTrigger = thisProduct.element.querySelector(select.menuProduct.clickable);
+      thisProduct.form = thisProduct.element.querySelector(select.menuProduct.form);
+      thisProduct.formInputs = thisProduct.form.querySelectorAll(select.all.formInputs);
+      thisProduct.cartButton = thisProduct.element.querySelector(select.menuProduct.cartButton);
+      thisProduct.priceElem = thisProduct.element.querySelector(select.menuProduct.priceElem);
+    }
+
     initAccordion() {
       const thisProduct = this;
 
-      /* find the clickable trigger (the element that should react to clicking) */
-      const clickableTrigger = thisProduct.element.querySelector(select.menuProduct.clickable);
-
       /* START: add event listener to clickable trigger on event click */
-      clickableTrigger.addEventListener('click', function (event) {
+      thisProduct.accordionTrigger.addEventListener('click', function (event) {
         console.log('clicked');
         /* prevent default action for event */
         event.preventDefault();
@@ -98,6 +108,69 @@
         thisProduct.element.classList.toggle(classNames.menuProduct.wrapperActive);
       });
       console.log('Accordion initialized for product: ', thisProduct.id);
+    }
+
+    initOrderForm() {
+      console.log('initOrderForm worked', this.initOrderForm);
+
+      const thisProduct = this;
+
+      thisProduct.form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        thisProduct.processOrder();
+      });
+
+      for (let input of thisProduct.formInputs) {
+        input.addEventListener('change', function () {
+          thisProduct.processOrder();
+        });
+      }
+
+      thisProduct.cartButton.addEventListener('click', function (event) {
+        event.preventDefault();
+        thisProduct.processOrder();
+      });
+    }
+
+    processOrder() {
+      console.log('processOrder worked', this.processOrder);
+
+      const thisProduct = this;
+
+      const formData = utils.serializeFormToObject(thisProduct.form);
+      console.log('formData', formData);
+
+      //ustaw cene na cene domyslna
+      let price = thisProduct.data.price;
+      //dla kazdej kategorii (param)...
+      for (let paramId in thisProduct.data.params) {
+        //określ wartość parametru, np. paramId = 'toppings', param = { label: 'Toppings', wpisz: 'checkboxs'... }
+        const param = thisProduct.data.params[paramId];
+        console.log(paramId, param);
+
+        //dla kazdej opcji w tej kategorii
+        for (let optionId in param.options) {
+          //okresl wartosc opci np. optionId = 'olives', option = {label: 'Toppings', type: 'checkboxes'...}
+          const option = param.options[optionId];
+          console.log(optionId, option);
+
+          // sprawdzamy, czy w formData istnieje właściwość o nazwie paramId
+          // i czy zawiera ona nazwę sprawdzanej opcji (czyli czy opcja została wybrana)
+          if (formData[paramId] && formData[paramId].includes(optionId)) {
+            // opcja jest zaznaczona – teraz sprawdzamy, czy nie jest opcją domyślną
+            if (!option.default) {
+              // opcja zaznaczona, ale niedomyślna – zwiększamy cenę o koszt opcji
+              price += option.price;
+            }
+          } else if (option.default) {
+            // opcja nie jest zaznaczona, ale jest domyślna – odejmujemy koszt opcji (bo domyślna cena już ją zawiera)
+            price -= option.price;
+          }
+        }
+      }
+      console.log('Total pizza price: ', price);
+      //aktualizacja obliczonej ceny w HTML
+      thisProduct.priceElem.innerHTML = price;
     }
   }
 
@@ -124,6 +197,10 @@
       const menuContainer = document.querySelector(select.containerOf.menu);
       //dodawanie stworzony element na strone
       menuContainer.appendChild(element);
+
+      // console.log('Template element (w initData):', document.querySelector(select.templateOf.menuProduct));
+      // console.log('Menu container (w initData):', document.querySelector(select.containerOf.menu));
+      // console.log('Form inputs (w initData):', document.querySelectorAll(select.all.formInputs));
     },
 
     init: function () {
@@ -138,6 +215,10 @@
       thisApp.initMenu();
     },
   };
+
+  // console.log('Template element:', document.querySelector(select.templateOf.menuProduct));
+  // console.log('Menu container:', document.querySelector(select.containerOf.menu));
+  // console.log('Form inputs:', document.querySelectorAll(select.all.formInputs));
 
   app.init();
 }
