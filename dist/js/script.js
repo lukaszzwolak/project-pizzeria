@@ -88,6 +88,7 @@
       thisProduct.formInputs = thisProduct.form.querySelectorAll(select.all.formInputs);
       thisProduct.cartButton = thisProduct.element.querySelector(select.menuProduct.cartButton);
       thisProduct.priceElem = thisProduct.element.querySelector(select.menuProduct.priceElem);
+      thisProduct.imageWrapper = thisProduct.element.querySelector(select.menuProduct.imageWrapper);
     }
 
     initAccordion() {
@@ -165,6 +166,18 @@
           } else if (option.default) {
             // opcja nie jest zaznaczona, ale jest domyślna – odejmujemy koszt opcji (bo domyślna cena już ją zawiera)
             price -= option.price;
+          }
+
+          //obsluga obrazkow
+          const optionImage = thisProduct.imageWrapper.querySelector(`.${paramId}-${optionId}`);
+
+          const optionSelected = formData[paramId] && formData[paramId].includes(optionId);
+          if (optionImage) {
+            if (optionSelected) {
+              optionImage.classList.add(classNames.menuProduct.imageVisible);
+            } else {
+              optionImage.classList.remove(classNames.menuProduct.imageVisible);
+            }
           }
         }
       }
