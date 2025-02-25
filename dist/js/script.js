@@ -200,8 +200,10 @@
     constructor(element) {
       const thisWidget = this;
 
+      /*nasluchiwacze*/
       thisWidget.getElements(element);
       thisWidget.setValue(thisWidget.input.value);
+      thisWidget.initActions();
 
       console.log('AmountWidget: ', thisWidget);
       console.log('constructor arguments: ', element);
@@ -226,10 +228,32 @@
       thisWidget.value = newValue;
       thisWidget.input.value = thisWidget.value;
 
-      if (thisWidget.value != newValue && isNaN(newValue)) {
+      if (!isNaN(newValue)
+        && newValue !== thisWidget.value
+        && newValue >= settings.amountWidget.defaultMin
+        && newValue <= settings.amountWidget.defaultMax
+      ) {
         thisWidget.value = newValue;
       }
       thisWidget.input.value = thisWidget.value;
+    }
+
+    initActions() {
+      const thisWidget = this;
+
+      thisWidget.input.addEventListener('change', function () {
+        thisWidget.setValue(thisWidget.input.value);
+      });
+
+      thisWidget.linkDecrease.addEventListener('click', function (event) {
+        event.preventDefault();
+        thisWidget.setValue(Math.max(settings.amountWidget.defaultMin, thisWidget.value - 1));
+      });
+
+      thisWidget.linkIncrease.addEventListener('click', function (event) {
+        event.preventDefault();
+        thisWidget.setValue(Math.min(settings.amountWidget.defaultMax, thisWidget.value + 1));
+      });
     }
   }
 
