@@ -184,6 +184,8 @@
         }
       }
       console.log('Total pizza price: ', price);
+      /*multiply price by amount */
+      price *= thisProduct.amountWidget.value;
       //aktualizacja obliczonej ceny w HTML
       thisProduct.priceElem.innerHTML = price;
     }
@@ -192,7 +194,9 @@
       const thisProduct = this;
 
       thisProduct.amountWidget = new amountWidget(thisProduct.amountWidgetElem);
-      console.log('AmountWidget instance: ', thisProduct.amountWidget);
+      thisProduct.amountWidgetElem.addEventListener('updated', function () {
+        thisProduct.processOrder();
+      });
     }
   }
 
@@ -235,6 +239,8 @@
       // Aktualizujemy wartość tylko jeśli jest inna niż poprzednia
       if (thisWidget.value !== newValue) {
         thisWidget.value = newValue;
+        thisWidget.input.value = thisWidget.value;
+        thisWidget.announce();
       }
 
       // Ustawiamy poprawioną wartość w inpucie
@@ -257,6 +263,13 @@
         event.preventDefault();
         thisWidget.setValue(Math.min(settings.amountWidget.defaultMax, thisWidget.value + 1));
       });
+    }
+
+    announce() {
+      const thisWidget = this;
+
+      const event = new Event('updated');
+      thisWidget.element.dispatchEvent(event);
     }
   }
 
