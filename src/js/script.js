@@ -222,19 +222,22 @@
     setValue(value) {
       const thisWidget = this;
 
-      const newValue = parseInt(value);
+      let newValue = parseInt(value);
 
-      /* TODO: add validation */
-      thisWidget.value = newValue;
-      thisWidget.input.value = thisWidget.value;
+      // Jeśli wpisano litery lub pustą wartość, ustawiamy 1
+      if (isNaN(newValue)) {
+        newValue = settings.amountWidget.defaultValue;
+      }
 
-      if (!isNaN(newValue)
-        && newValue !== thisWidget.value
-        && newValue >= settings.amountWidget.defaultMin
-        && newValue <= settings.amountWidget.defaultMax
-      ) {
+      // Jeśli wartość przekracza zakres, ustawiamy wartość minimalną lub maksymalną
+      newValue = Math.min(Math.max(newValue, settings.amountWidget.defaultMin), settings.amountWidget.defaultMax);
+
+      // Aktualizujemy wartość tylko jeśli jest inna niż poprzednia
+      if (thisWidget.value !== newValue) {
         thisWidget.value = newValue;
       }
+
+      // Ustawiamy poprawioną wartość w inpucie
       thisWidget.input.value = thisWidget.value;
     }
 
