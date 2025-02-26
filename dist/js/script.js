@@ -206,7 +206,7 @@
 
       /*nasluchiwacze*/
       thisWidget.getElements(element);
-      thisWidget.setValue(thisWidget.input.value);
+      thisWidget.setValue(thisWidget.input.value || settings.amountWidget.defaultValue);
       thisWidget.initActions();
 
       console.log('AmountWidget: ', thisWidget);

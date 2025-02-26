@@ -61,7 +61,7 @@
   <div id="product-list" class="product-list container"></div>
 
   <script id="template-menu-product" type="text/x-handlebars-template">
-      <article class="product"> <!-- product -->
+      <article class="product active"> <!-- product -->
 
           <header class="product__header">
             <h3 class="product__name no-spacing">{{ name }} <i class="fas fa-chevron-down product__icon"></i></h3>
@@ -118,7 +118,7 @@
                 <div class="widget-amount"> <!-- widget-amount -->
                   <h3 class="product__params-title">Select quantity</h3>
                   <a class="btn-quantity" href="#less"><i class="fas fa-minus"></i></a>
-                  <input type="text" name="amount" value="1">
+                  <input type="text" name="amount">
                   <a class="btn-quantity" href="#more"><i class="fas fa-plus"></i></a>
                 </div>
                 <p class="product__total-price">
