@@ -63,9 +63,10 @@
       thisProduct.getElements();
       thisProduct.initAccordion();
       thisProduct.initOrderForm();
+      thisProduct.initAmountWidget();
       thisProduct.processOrder();
 
-      console.log('new Product: ', thisProduct);
+      //console.log('new Product: ', thisProduct);
     }
 
     renderInMenu() {
@@ -88,6 +89,8 @@
       thisProduct.formInputs = thisProduct.form.querySelectorAll(select.all.formInputs);
       thisProduct.cartButton = thisProduct.element.querySelector(select.menuProduct.cartButton);
       thisProduct.priceElem = thisProduct.element.querySelector(select.menuProduct.priceElem);
+      thisProduct.imageWrapper = thisProduct.element.querySelector(select.menuProduct.imageWrapper);
+      thisProduct.amountWidgetElem = thisProduct.element.querySelector(select.menuProduct.amountWidget);
     }
 
     initAccordion() {
@@ -107,11 +110,11 @@
         /* toggle active class on thisProduct.element */
         thisProduct.element.classList.toggle(classNames.menuProduct.wrapperActive);
       });
-      console.log('Accordion initialized for product: ', thisProduct.id);
+      //console.log('Accordion initialized for product: ', thisProduct.id);
     }
 
     initOrderForm() {
-      console.log('initOrderForm worked', this.initOrderForm);
+      //console.log('initOrderForm worked', this.initOrderForm);
 
       const thisProduct = this;
 
@@ -133,7 +136,7 @@
     }
 
     processOrder() {
-      console.log('processOrder worked', this.processOrder);
+      //console.log('processOrder worked', this.processOrder);
 
       const thisProduct = this;
 
@@ -166,11 +169,91 @@
             // opcja nie jest zaznaczona, ale jest domyślna – odejmujemy koszt opcji (bo domyślna cena już ją zawiera)
             price -= option.price;
           }
+
+          //obsluga obrazkow
+          const optionImage = thisProduct.imageWrapper.querySelector(`.${paramId}-${optionId}`);
+
+          const optionSelected = formData[paramId] && formData[paramId].includes(optionId);
+          if (optionImage) {
+            if (optionSelected) {
+              optionImage.classList.add(classNames.menuProduct.imageVisible);
+            } else {
+              optionImage.classList.remove(classNames.menuProduct.imageVisible);
+            }
+          }
         }
       }
       console.log('Total pizza price: ', price);
       //aktualizacja obliczonej ceny w HTML
       thisProduct.priceElem.innerHTML = price;
+    }
+
+    initAmountWidget() {
+      const thisProduct = this;
+
+      thisProduct.amountWidget = new amountWidget(thisProduct.amountWidgetElem);
+      console.log('AmountWidget instance: ', thisProduct.amountWidget);
+    }
+  }
+
+  class amountWidget {
+    constructor(element) {
+      const thisWidget = this;
+
+      /*nasluchiwacze*/
+      thisWidget.getElements(element);
+      thisWidget.setValue(thisWidget.input.value);
+      thisWidget.initActions();
+
+      console.log('AmountWidget: ', thisWidget);
+      console.log('constructor arguments: ', element);
+    }
+
+    getElements(element) {
+      const thisWidget = this;
+
+      thisWidget.element = element;
+      thisWidget.input = thisWidget.element.querySelector(select.widgets.amount.input);
+      thisWidget.linkDecrease = thisWidget.element.querySelector(select.widgets.amount.linkDecrease);
+      thisWidget.linkIncrease = thisWidget.element.querySelector(select.widgets.amount.linkIncrease);
+
+    }
+
+    setValue(value) {
+      const thisWidget = this;
+
+      const newValue = parseInt(value);
+
+      /* TODO: add validation */
+      thisWidget.value = newValue;
+      thisWidget.input.value = thisWidget.value;
+
+      if (!isNaN(newValue)
+        && newValue !== thisWidget.value
+        && newValue >= settings.amountWidget.defaultMin
+        && newValue <= settings.amountWidget.defaultMax
+      ) {
+        thisWidget.value = newValue;
+      }
+      thisWidget.input.value = thisWidget.value;
+    }
+
+    initActions() {
+      const thisWidget = this;
+
+      thisWidget.input.addEventListener('change', function () {
+        thisWidget.setValue(thisWidget.input.value);
+      });
+
+      thisWidget.linkDecrease.addEventListener('click', function (event) {
+        event.preventDefault();
+        thisWidget.setValue(Math.max(settings.amountWidget.defaultMin, thisWidget.value - 1));
+      });
+
+      thisWidget.linkIncrease.addEventListener('click', function (event) {
+        event.preventDefault();
+        thisWidget.setValue(Math.min(settings.amountWidget.defaultMax, thisWidget.value + 1));
+      });
     }
   }
 
