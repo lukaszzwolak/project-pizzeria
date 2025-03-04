@@ -48,8 +48,8 @@
     cartProduct: {
       amountWidget: '.widget-amount',
       priceElem: '.cart__product-price',
-      edit: '.cart__product-edit',
-      remove: '.cart__product-remove',
+      edit: 'a[href="#edit"]',
+      remove: 'a[href="#remove"]',
     },
   };
   // Klasy CSS używane w kodzie
@@ -290,6 +290,9 @@
       thisCart.dom.productList.addEventListener('updated', function () {
         thisCart.update();
       });
+      thisCart.dom.productList.addEventListener('remove', function (event) {
+        thisCart.remove(event.detail.cartProduct);
+      })
     }
     add(menuProduct) {
       const thisCart = this;
@@ -349,6 +352,18 @@
       console.log('Delivery Fee:', thisCart.dom.deliveryFee.innerHTML);
       console.log('Total Price:', thisCart.totalPrice);
     }
+    remove(cartProduct) {
+      const thisCart = this;
+      //szukanie indeksu w tablicy
+      const index = thisCart.products.indexOf(cartProduct);
+      if (index !== -1) {
+        thisCart.products.splice(index, 1);
+      }
+      /*usuniecie reprezentacji produktu z htmla*/
+      cartProduct.dom.wrapper.remove();
+      /*aktualizacja koszyka po usunieciu produktu */
+      thisCart.update();
+    }
   }
 
   class CartProduct {
@@ -366,6 +381,7 @@
 
       thisCartProduct.getElements(element);
       thisCartProduct.initAmountWidget();
+      thisCartProduct.initActions();
     }
     getElements(element) {
       const thisCartProduct = this;
@@ -385,6 +401,31 @@
         thisCartProduct.dom.price.innerHTML = thisCartProduct.price;
 
         thisCartProduct.cart.update();
+      });
+    }
+
+    remove() {
+      const thisCartProduct = this;
+
+      const event = new CustomEvent('remove', {
+        bubbles: true,
+        detail: {
+          cartProduct: thisCartProduct,
+        },
+      });
+      thisCartProduct.dom.wrapper.dispatchEvent(event);
+    }
+
+    initActions() {
+      const thisCartProduct = this;
+
+      thisCartProduct.dom.edit.addEventListener('click', (event) => {
+        event.preventDefault();
+      });
+
+      thisCartProduct.dom.remove.addEventListener('click', (event) => {
+        event.preventDefault();
+        thisCartProduct.remove();
       });
     }
   }
