@@ -45,6 +45,12 @@
       phone: '[name="phone"]',
       address: '[name="address"]',
     },
+    cartProduct: {
+      amountWidget: '.widget-amount',
+      priceElem: '.cart__product-price',
+      edit: '.cart__product-edit',
+      remove: '.cart__product-remove',
+    },
   };
 
   // Klasy CSS używane w kodzie
@@ -338,16 +344,30 @@
 
       thisCartProduct.getElements(element);
       console.log('instancja CartProduct: ', thisCartProduct);
+      thisCartProduct.initAmountWidget();
     }
     getElements(element) {
       const thisCartProduct = this;
       thisCartProduct.dom = {};
       thisCartProduct.dom.wrapper = element;
 
-      thisCartProduct.dom.amountWidget = thisCartProduct.dom.wrapper.querySelector(select.widgets.amount.input);
-      thisCartProduct.dom.price = thisCartProduct.dom.wrapper.querySelector(select.cart.totalPrice); // ✅ Poprawione
-      thisCartProduct.dom.edit = thisCartProduct.dom.wrapper.querySelector(select.cart.formSubmit);
-      thisCartProduct.dom.remove = thisCartProduct.dom.wrapper.querySelector(select.cart.form);
+      thisCartProduct.dom.amountWidget = thisCartProduct.dom.wrapper.querySelector(select.cartProduct.amountWidget);
+      thisCartProduct.dom.price = thisCartProduct.dom.wrapper.querySelector(select.cartProduct.priceElem);
+      thisCartProduct.dom.edit = thisCartProduct.dom.wrapper.querySelector(select.cartProduct.edit);
+      thisCartProduct.dom.remove = thisCartProduct.dom.wrapper.querySelector(select.cartProduct.remove);
+    }
+
+    initAmountWidget() {
+      const thisCartProduct = this;
+      thisCartProduct.amountWidget = new AmountWidget(thisCartProduct.dom.amountWidget);
+
+      thisCartProduct.dom.amountWidget.addEventListener('updated', function () {
+        thisCartProduct.amount = thisCartProduct.amountWidget.value;
+        thisCartProduct.price = thisCartProduct.amount * thisCartProduct.priceSingle;
+
+        thisCartProduct.dom.price.innerHTML = thisCartProduct.price;
+        console.log('Zaktualizowano ilość:', thisCartProduct.amount, 'Nowa cena:', thisCartProduct.price);
+      });
     }
   }
 
