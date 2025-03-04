@@ -308,19 +308,41 @@
     add(menuProduct) {
       const thisCart = this;
 
-      // Wygenerowanie kodu HTML na podstawie szablonu
+      /*wygenerowanie kodu html*/
       const generatedHTML = templates.cartProduct(menuProduct);
 
-      // Zamiana kodu HTML na element DOM
+      /* zamiana kodu html na element DOM */
       const generatedDOM = utils.createDOMFromHTML(generatedHTML);
 
-      // Dodanie elementu do listy produktów w koszyku
+      /* dodanie elementu do listy w koszyku */
       thisCart.dom.productList.appendChild(generatedDOM);
 
-      // Przechowywanie produktu w koszyku
+      /* przechowywanie produkttow w koszyku */
       thisCart.products.push(menuProduct);
 
-      console.log('Produkt dodany do koszyka:', menuProduct);
+      console.log('produkt dodany do koszyka:', thisCart.products);
+    }
+  }
+
+  class CartProduct {
+    constructor(menuProduct, element) {
+      const thisCartProduct = this;
+
+      //przypisanie wlasciwosci z menuProduct
+      thisCartProduct.id = menuProduct.id;
+      thisCartProduct.name = menuProduct.name;
+      thisCartProduct.amount = menuProduct.amount;
+      thisCartProduct.priceSingle = menuProduct.priceSingle;
+      thisCartProduct.price = menuProduct.price;
+      thisCartProduct.params = menuProduct.params;
+
+      thisCartProduct.getElements(element);
+      console.log('instancja CartProduct: ', thisCartProduct);
+    }
+    getElements(element) {
+      const thisCartProduct = this;
+      thisCartProduct.dom = {};
+      thisCartProduct.dom.wrapper = element;
     }
   }
 
