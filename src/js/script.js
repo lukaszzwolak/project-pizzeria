@@ -343,6 +343,10 @@
       const thisCartProduct = this;
       thisCartProduct.dom = {};
       thisCartProduct.dom.wrapper = element;
+      thisCartProduct.dom = amountWidget;
+      thisCartProduct.dom = price;
+      thisCartProduct.dom = edit;
+      thisCartProduct.dom = remove;
     }
   }
 

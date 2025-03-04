@@ -318,7 +318,7 @@
       thisCart.dom.productList.appendChild(generatedDOM);
 
       /* przechowywanie produkttow w koszyku */
-      thisCart.products.push(menuProduct);
+      thisCart.products.push(new CartProduct(menuProduct, generatedDOM));
 
       console.log('produkt dodany do koszyka:', thisCart.products);
     }
@@ -343,6 +343,11 @@
       const thisCartProduct = this;
       thisCartProduct.dom = {};
       thisCartProduct.dom.wrapper = element;
+
+      thisCartProduct.dom.amountWidget = thisCartProduct.dom.wrapper.querySelector(select.widgets.amount.input);
+      thisCartProduct.dom.price = thisCartProduct.dom.wrapper.querySelector(select.cart.totalPrice); // ✅ Poprawione
+      thisCartProduct.dom.edit = thisCartProduct.dom.wrapper.querySelector(select.cart.formSubmit);
+      thisCartProduct.dom.remove = thisCartProduct.dom.wrapper.querySelector(select.cart.form);
     }
   }
 
