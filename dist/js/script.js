@@ -70,6 +70,11 @@
       defaultMax: 10,
     },
     deliveryFee: 20,
+    db: {
+      url: '//localhost:3131',
+      products: 'products',
+      orders: 'orders',
+    },
   };
   // Kompilacja szablonów Handlebars
   const templates = {
@@ -279,21 +284,64 @@
       thisCart.dom.subtotalPrice = thisCart.dom.wrapper.querySelector(select.cart.subtotalPrice);
       thisCart.dom.totalPrice = thisCart.dom.wrapper.querySelector(select.cart.totalPrice);
       thisCart.dom.totalNumber = thisCart.dom.wrapper.querySelector(select.cart.totalNumber);
+      thisCart.dom.form = thisCart.dom.wrapper.querySelector(select.cart.form);
     }
     initActions() {
       const thisCart = this;
+
       if (thisCart.dom.toggleTrigger) {
         thisCart.dom.toggleTrigger.addEventListener('click', function () {
           thisCart.dom.wrapper.classList.toggle(classNames.cart.wrapperActive);
         });
       }
+
       thisCart.dom.productList.addEventListener('updated', function () {
         thisCart.update();
       });
+
       thisCart.dom.productList.addEventListener('remove', function (event) {
         thisCart.remove(event.detail.cartProduct);
-      })
+      });
+
+      // Nasłuchiwacz na formularz zamówienia
+      thisCart.dom.form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        console.log('Zamówienie zostało złożone!');
+        thisCart.sendOrder();
+      });
     }
+    sendOrder() {
+      const thisCart = this;
+      const url = settings.db.url + '/' + settings.db.orders;
+
+      const payload = {
+        address: thisCart.dom.form.querySelector(select.cart.address).value,
+        phone: thisCart.dom.form.querySelector(select.cart.phone).value,
+        totalPrice: thisCart.totalPrice,
+        subtotalPrice: thisCart.totalPrice - settings.deliveryFee,
+        totalNumber: thisCart.products.length,
+        deliveryFee: settings.deliveryFee,
+        products: [],
+      };
+
+      for (let prod of thisCart.products) {
+        payload.products.push(prod.getData());
+      }
+
+      console.log('Zamówienie:', payload);
+
+      const options = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      };
+
+      fetch(url, options);
+    }
+
+
     add(menuProduct) {
       const thisCart = this;
       const generatedHTML = templates.cartProduct(menuProduct);
@@ -366,6 +414,7 @@
     }
   }
 
+
   class CartProduct {
     constructor(menuProduct, element, cart) {
       const thisCartProduct = this;
@@ -428,11 +477,47 @@
         thisCartProduct.remove();
       });
     }
+
+    getData() {
+      const thisCartProduct = this;
+      return {
+        id: thisCartProduct.id,
+        name: thisCartProduct.name,
+        amount: thisCartProduct.amount,
+        priceSingle: thisCartProduct.priceSingle,
+        price: thisCartProduct.price,
+        params: thisCartProduct.params
+      };
+    }
   }
   const app = {
+    initData() {
+      const thisApp = this;
+      thisApp.data = {};
+      const url = settings.db.url + '/' + settings.db.products;
+
+      fetch(url)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Błąd HTTP: ${response.status} ${response.statusText}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log('Pobrane produkty:', data);
+          thisApp.data.products = data;
+          thisApp.initMenu();
+        })
+        .catch(error => {
+          console.error('Błąd pobierania danych:', error);
+        });
+    },
     initMenu() {
-      for (let productData in dataSource.products) {
-        new Product(productData, dataSource.products[productData]);
+      const thisApp = this;
+      if (!thisApp.data.products) return;
+
+      for (let productData of thisApp.data.products) {
+        new Product(productData.id, productData);
       }
     },
     initCart() {
@@ -441,7 +526,7 @@
       thisApp.cart = new Cart(cartElem);
     },
     init() {
-      this.initMenu();
+      this.initData();
       this.initCart();
     },
   };
