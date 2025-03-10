@@ -1,8 +1,10 @@
-@import 'partials/settings';
-@import 'partials/global';
-@import 'partials/elements';
+@use 'partials/settings';
+@use 'partials/typography';
+@use 'partials/global';
+@use 'partials/elements';
 
-@import 'partials/header';
-@import 'partials/cart';
+@use 'partials/header';
+@use 'partials/cart';
 
-@import 'partials/product';
+@use 'partials/product';
+@use 'partials/booking';
