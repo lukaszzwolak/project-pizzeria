@@ -1,12 +1,14 @@
-// Obiekt przechowujący selektory używane w kodzie
 export const select = {
     templateOf: {
         menuProduct: '#template-menu-product',
-        cartProduct: '#template-cart-product'
+        cartProduct: '#template-cart-product',
+        bookingWidget: '#template-booking-widget',
     },
     containerOf: {
         menu: '#product-list',
         cart: '#cart',
+        pages: '#pages',
+        booking: '.booking-wrapper',
     },
     all: {
         menuProducts: '#product-list > .product',
@@ -27,11 +29,28 @@ export const select = {
             linkDecrease: 'a[href="#less"]',
             linkIncrease: 'a[href="#more"]',
         },
+        datePicker: {
+            wrapper: '.date-picker',
+            input: 'input[name="date"]',
+        },
+        hourPicker: {
+            wrapper: '.hour-picker',
+            input: 'input[type="range"]',
+            output: '.output',
+        },
+    },
+    booking: {
+        peopleAmount: '.people-amount',
+        hoursAmount: '.hours-amount',
+        tables: '.floor-plan .table',
+    },
+    nav: {
+        links: '.main-nav a',
     },
     cart: {
         productList: '.cart__order-summary',
         toggleTrigger: '.cart__summary',
-        totalNumber: `.cart__total-number`,
+        totalNumber: '.cart__total-number',
         totalPrice: '.cart__total-price strong, .cart__order-total .cart__order-price-sum strong',
         subtotalPrice: '.cart__order-subtotal .cart__order-price-sum strong',
         deliveryFee: '.cart__order-delivery .cart__order-price-sum strong',
@@ -47,7 +66,7 @@ export const select = {
         remove: 'a[href="#remove"]',
     },
 };
-// Klasy CSS używane w kodzie
+
 export const classNames = {
     menuProduct: {
         wrapperActive: 'active',
@@ -55,9 +74,19 @@ export const classNames = {
     },
     cart: {
         wrapperActive: 'active',
-    }
+    },
+    booking: {
+        loading: 'loading',
+        tableBooked: 'booked',
+    },
+    nav: {
+        active: 'active',
+    },
+    pages: {
+        active: 'active',
+    },
 };
-// Ustawienia aplikacji
+
 export const settings = {
     amountWidget: {
         defaultValue: 1,
@@ -65,14 +94,31 @@ export const settings = {
         defaultMax: 10,
     },
     deliveryFee: 20,
+    hours: {
+        open: 12,
+        close: 24,
+    },
+    datePicker: {
+        maxDaysInFuture: 14,
+    },
+    booking: {
+        tableIdAttribute: 'data-table',
+    },
     db: {
         url: '//localhost:3131',
         products: 'products',
         orders: 'orders',
+        bookings: 'bookings',
+        events: 'events',
+        dateStartParamKey: 'date_gte',
+        dateEndParamKey: 'date_lte',
+        notRepeatParam: 'repeat=false',
+        repeatParam: 'repeat_ne=false',
     },
 };
-// Kompilacja szablonów Handlebars
+
 export const templates = {
     menuProduct: Handlebars.compile(document.querySelector(select.templateOf.menuProduct).innerHTML),
     cartProduct: Handlebars.compile(document.querySelector(select.templateOf.cartProduct).innerHTML),
+    bookingWidget: Handlebars.compile(document.querySelector(select.templateOf.bookingWidget).innerHTML),
 };
