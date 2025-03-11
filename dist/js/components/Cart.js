@@ -88,6 +88,7 @@ class Cart {
 
         thisCart.update();
     }
+
     update() {
         const thisCart = this;
 
@@ -129,13 +130,8 @@ class Cart {
         } else {
             thisCart.dom.deliveryFee.innerHTML = 0;
         }
-
-        // Logowanie wartości do konsoli dla testów
-        console.log('Total Number:', totalNumber);
-        console.log('Subtotal Price:', subtotalPrice);
-        console.log('Delivery Fee:', thisCart.dom.deliveryFee.innerHTML);
-        console.log('Total Price:', thisCart.totalPrice);
     }
+
     remove(cartProduct) {
         const thisCart = this;
         //szukanie indeksu w tablicy

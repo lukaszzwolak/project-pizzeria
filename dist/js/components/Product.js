@@ -89,11 +89,10 @@ class Product {
                 }
             }
         }
-        // aktualizacja ceny jednostkowej
         thisProduct.priceSingle = price;
-        // aktualizacja ceny w HTMLu
         thisProduct.dom.priceElem.innerHTML = price * thisProduct.amountWidget.value;
     }
+
     initAmountWidget() {
         const thisProduct = this;
         if (thisProduct.dom.amountWidgetElem) {
