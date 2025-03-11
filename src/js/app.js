@@ -1,8 +1,16 @@
 import { settings, select, classNames } from "./settings.js";
 import Product from "./components/Product.js";
 import Cart from "./components/Cart.js";
+import Booking from "./components/Booking.js";
 
 const app = {
+  initBooking: function () {
+    const thisApp = this;
+    thisApp.bookingWidget = document.querySelector(select.containerOf.booking);
+
+    thisApp.booking = new Booking(bookingWidget);
+  },
+
   initPages: function () {
     const thisApp = this;
 
@@ -53,7 +61,7 @@ const app = {
       );
     }
   },
-  initData() {
+  initData: function () {
     const thisApp = this;
     thisApp.data = {};
     const url = settings.db.url + '/' + settings.db.products;
@@ -74,7 +82,7 @@ const app = {
         console.error('Błąd pobierania danych:', error);
       });
   },
-  initMenu() {
+  initMenu: function () {
     const thisApp = this;
     if (!thisApp.data.products) return;
 
@@ -82,7 +90,7 @@ const app = {
       new Product(productData.id, productData);
     }
   },
-  initCart() {
+  initCart: function () {
     const thisApp = this;
     const cartElem = document.querySelector(select.containerOf.cart);
     thisApp.cart = new Cart(cartElem);
@@ -93,11 +101,12 @@ const app = {
       app.cart.add(event.detail.product);
     });
   },
-  init() {
+  init: function () {
     const thisApp = this;
     thisApp.initPages();
     thisApp.initData();
     thisApp.initCart();
+    thisApp.initBooking();
   },
 };
 app.init();
