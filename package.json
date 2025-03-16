@@ -49,6 +49,7 @@
         "stylelint-scss": "^4.3.0"
     },
     "dependencies": {
-        "json-server": "^0.17.4"
+        "json-server": "^0.17.4",
+        "rangeslider.js": "^2.3.3"
     }
 }

@@ -111,4 +111,3 @@ const app = {
   },
 };
 app.init();
-
